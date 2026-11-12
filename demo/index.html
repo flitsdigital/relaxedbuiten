@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RelaxedBuiten formulieren — demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body{margin:0;font-family:"Open Sans",system-ui,sans-serif;background:#fff;color:#111}
+    main{max-width:1180px;margin:0 auto;padding:48px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:40px}
+    h1{font-family:Montserrat,sans-serif;text-align:center;margin:40px 0 0}
+    section h3{font-family:Montserrat,sans-serif;margin:0 0 12px;font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:#888}
+    .footer{grid-column:1/-1;background:#1f2b1f;color:#fff;padding:32px;border-radius:24px}
+    .footer [data-rb-form]{--rb-text:#fff;--rb-muted:#cfd8cf;max-width:560px}
+  </style>
+  <script>
+    /* Demo: zonder ?live=1 wordt er niets verstuurd */
+    if (!/[?&]live=1/.test(location.search)) {
+      window.RBFormsConfig = { webhook: 'data:application/json,{"ok":true}' };
+    }
+  </script>
+</head>
+<body>
+  <h1>RelaxedBuiten formulieren</h1>
+  <main>
+    <section><h3>data-rb-form="brochure"</h3><div data-rb-form="brochure"></div></section>
+    <section><h3>data-rb-form="offerte"</h3><div data-rb-form="offerte" data-interesse="hottub"></div></section>
+    <section><h3>data-rb-form="contact"</h3><div data-rb-form="contact"></div></section>
+    <section class="footer"><h3 style="color:#cfd8cf">data-rb-form="brochure-mini"</h3><div data-rb-form="brochure-mini"></div></section>
+  </main>
+  <script src="../dist/rb-forms.min.js" defer></script>
+</body>
+</html>
