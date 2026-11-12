@@ -22,9 +22,9 @@ Embedbare formulieren voor [relaxedbuiten.nl](https://relaxedbuiten.nl). Elke in
 
 | Variant | Wat het is |
 |---|---|
-| `brochure` | 2 stappen: naam, e-mail, telefoon → interesse, woonplaats, akkoord. Klant krijgt de brochure. |
-| `offerte` | 2 stappen: naam, e-mail, telefoon → interesse (verplicht), vragen, akkoord. Klant krijgt bevestiging + brochure. |
-| `contact` | 1 stap: naam, e-mail, telefoon, bericht, akkoord. |
+| `brochure` | 2 stappen: naam, e-mail, telefoon → interesse en woonplaats (optioneel). Klant krijgt de brochure. |
+| `offerte` | 2 stappen: naam, e-mail, telefoon → interesse (verplicht) en vragen. Klant krijgt bevestiging + brochure. |
+| `contact` | 1 stap: naam, e-mail, telefoon (optioneel) en bericht. |
 | `brochure-mini` | Alleen e-mailadres + knop, voor de footer. Klant krijgt de brochure. |
 
 ### Opties (data-attributen)

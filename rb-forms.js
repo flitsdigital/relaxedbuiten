@@ -24,6 +24,7 @@
   var FORMS = {
     brochure: {
       title: 'Gratis brochure aanvragen',
+      stepTitles: ['Uw gegevens', 'Uw interesse'],
       image: true,
       submit: 'Stuur mij de brochure',
       success: { title: 'De brochure is onderweg!', text: 'Check uw mailbox: binnen een minuut heeft u onze brochure met alle hottubs, sauna\'s en spa\'s.' },
@@ -36,13 +37,13 @@
         ],
         [
           { name: 'interesse', label: 'Waar heeft u interesse in?', hint: 'Meerdere opties mogelijk', type: 'chips', options: INTERESSES },
-          { name: 'woonplaats', label: 'Uw woonplaats', placeholder: 'Bijv. Ruinen', autocomplete: 'address-level2' },
-          { name: 'akkoord', type: 'consent', required: true }
+          { name: 'woonplaats', label: 'Uw woonplaats', placeholder: 'Bijv. Ruinen', autocomplete: 'address-level2' }
         ]
       ]
     },
     offerte: {
       title: 'Vrijblijvende offerte aanvragen',
+      stepTitles: ['Uw gegevens', 'Uw wensen'],
       subtitle: 'Wij adviseren u graag en nemen binnen 2 werkdagen contact met u op.',
       submit: 'Offerte aanvragen',
       success: { title: 'Bedankt voor uw aanvraag!', text: 'We nemen binnen 2 werkdagen contact met u op. Onze brochure is alvast naar uw mailbox gestuurd.' },
@@ -54,8 +55,7 @@
         ],
         [
           { name: 'interesse', label: 'Waar heeft u interesse in?', hint: 'Meerdere opties mogelijk', type: 'chips', options: INTERESSES, required: true },
-          { name: 'bericht', label: 'Heeft u nog vragen of opmerkingen?', type: 'textarea', placeholder: 'Bijv. gewenste maat, levering of plaatsing' },
-          { name: 'akkoord', type: 'consent', required: true }
+          { name: 'bericht', label: 'Heeft u nog vragen of opmerkingen?', type: 'textarea', placeholder: 'Bijv. gewenste maat, levering of plaatsing' }
         ]
       ]
     },
@@ -69,8 +69,7 @@
           { name: 'naam', label: 'Naam', required: true, autocomplete: 'name' },
           { row: [{ name: 'email', label: 'E-mailadres', type: 'email', required: true, placeholder: 'naam@voorbeeld.nl', autocomplete: 'email' },
                   { name: 'telefoon', label: 'Telefoonnummer', type: 'tel', placeholder: '+31 6 1234567', autocomplete: 'tel' }] },
-          { name: 'bericht', label: 'Bericht', type: 'textarea', required: true, placeholder: 'Waar kunnen we u mee helpen?' },
-          { name: 'akkoord', type: 'consent', required: true }
+          { name: 'bericht', label: 'Bericht', type: 'textarea', required: true, placeholder: 'Waar kunnen we u mee helpen?' }
         ]
       ]
     },
@@ -95,70 +94,88 @@
 
   /* ---------- Styles (in Shadow DOM, dus geen botsing met Webflow-CSS) ---------- */
   var CSS = [
-    ':host{--rb-accent:#F99786;--rb-accent-dark:#e9785f;--rb-bg:#f2f2f2;--rb-text:#111;--rb-muted:#6b6b6b;--rb-line:#d9d9d9;--rb-error:#d64545;--rb-radius:28px;',
-    '--rb-heading-font:Montserrat,system-ui,sans-serif;display:block;font-family:inherit;color:var(--rb-text)}',
+    ':host{--rb-accent:#F99786;--rb-accent-dark:#ef7f6a;--rb-bg:#f2f2f2;--rb-text:#111;--rb-muted:#6b6b6b;--rb-line:#d9d9d9;--rb-error:#d64545;--rb-radius:28px;',
+    '--rb-heading-font:Montserrat,system-ui,sans-serif;display:block;font-family:inherit;color:var(--rb-text);color-scheme:light}',
     '*,*::before,*::after{box-sizing:border-box}',
-    '.card{background:var(--rb-bg);border-radius:var(--rb-radius);padding:clamp(24px,4vw,48px);max-width:560px;margin:0 auto}',
-    '.compact .card,.card.compact{max-width:none;padding:0;background:transparent}',
-    '.progress{display:flex;gap:0;height:4px;background:#cecece;border-radius:4px;overflow:hidden;margin-bottom:12px}',
-    '.progress span{display:block;height:100%;background:var(--rb-accent);transition:width .35s ease}',
-    '.stepnr{font-size:15px;margin:0 0 28px}',
-    'h2{font-family:var(--rb-heading-font);font-weight:700;font-size:clamp(26px,3.4vw,36px);line-height:1.2;text-align:center;margin:0 0 12px;letter-spacing:-.01em}',
-    '.sub{text-align:center;color:var(--rb-muted);margin:0 0 24px;line-height:1.5}',
-    '.cover{display:block;width:150px;margin:20px auto 36px;transform:perspective(600px) rotateX(18deg) rotateZ(-16deg);box-shadow:-10px 14px 22px rgba(0,0,0,.22);border-radius:3px}',
-    '.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}',
     '.wrap{container-type:inline-size}',
-    '@container (max-width:420px){.row{grid-template-columns:1fr}}',
-    '@media (max-width:480px){.row{grid-template-columns:1fr}}',
-    '.field{margin:0 0 20px}',
-    'label.l,.l{display:block;font-size:16px;margin:0 0 8px}',
-    'legend.l{padding:0}',
-    '.req{color:var(--rb-accent-dark)}',
-    '.hint{font-size:13px;color:var(--rb-muted);margin:-4px 0 10px}',
+    /* kaart: padding schaalt mee met de breedte van het formulier */
+    '.card{background:var(--rb-bg);border-radius:var(--rb-radius);padding:28px 22px;max-width:560px;margin:0 auto}',
+    '@container (min-width:440px){.card{padding:40px}}',
+    '@container (min-width:540px){.card{padding:48px}}',
+    '.compact .card{max-width:none;padding:0;background:transparent}',
+    /* stappen */
+    '.progress{height:4px;background:#d6d6d6;border-radius:4px;overflow:hidden;margin:0 0 12px}',
+    '.progress span{display:block;height:100%;background:var(--rb-accent);border-radius:4px;transition:width .35s ease}',
+    '.stepnr{font-size:14px;color:var(--rb-muted);margin:0 0 24px}',
+    '.stepnr b{color:var(--rb-text);font-weight:600}',
+    /* kop */
+    '.head{margin:0 0 28px;text-align:center}',
+    'h2{font-family:var(--rb-heading-font);font-weight:700;font-size:30px;font-size:clamp(24px,7.2cqi,34px);line-height:1.18;margin:0;letter-spacing:-.01em;text-wrap:balance}',
+    '.sub{color:var(--rb-muted);margin:10px 0 0;line-height:1.5;font-size:15px;text-wrap:balance}',
+    '.cover{display:block;width:132px;height:auto;margin:-4px auto 36px;transform:perspective(600px) rotateX(18deg) rotateZ(-16deg);box-shadow:-10px 14px 22px rgba(0,0,0,.22);border-radius:3px}',
+    /* velden: één ritme van 20px, ook als een rij onder elkaar valt */
+    '.fields{display:grid;gap:20px}',
+    '.row{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}',
+    '@container (max-width:400px){.row{grid-template-columns:1fr}}',
+    '.field{margin:0;min-width:0}',
+    'fieldset.field{border:0;padding:0}',
+    '.l{display:block;font-size:16px;line-height:1.3;margin:0 0 8px;padding:0}',
+    '.opt{color:var(--rb-muted);font-size:14px}',
+    '.hint{font-size:13px;color:var(--rb-muted);margin:-2px 0 10px}',
     '.ctrl{position:relative}',
-    '.ctrl svg{position:absolute;left:16px;top:50%;width:20px;height:20px;transform:translateY(-50%);fill:none;stroke:#111;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}',
-    'input[type=text],input[type=email],input[type=tel],textarea{width:100%;font:inherit;font-size:16px;color:var(--rb-text);background:#fff;border:1px solid var(--rb-line);border-radius:999px;padding:12px 20px;min-height:46px;outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none}',
-    '.has-icon input{padding-left:48px}',
-    'textarea{border-radius:22px;min-height:120px;resize:vertical;line-height:1.5}',
+    '.ctrl svg{position:absolute;left:18px;top:50%;width:20px;height:20px;transform:translateY(-50%);fill:none;stroke:#111;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}',
+    'input[type=text],input[type=email],input[type=tel],textarea{display:block;width:100%;font:inherit;font-size:16px;line-height:1.4;color:var(--rb-text);background:#fff;border:1px solid var(--rb-line);border-radius:999px;padding:0 20px;height:48px;outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none}',
+    '.has-icon input{padding-left:50px}',
+    'textarea{height:auto;min-height:128px;padding:14px 20px;border-radius:24px;resize:vertical;line-height:1.5}',
     'input::placeholder,textarea::placeholder{color:#9a9a9a}',
     'input:focus,textarea:focus{border-color:var(--rb-accent);box-shadow:0 0 0 3px rgba(249,151,134,.25)}',
     '.invalid input,.invalid textarea{border-color:var(--rb-error)}',
-    '.err{color:var(--rb-error);font-size:13px;margin:6px 0 0 4px;min-height:0}',
-    '.chips{display:flex;flex-wrap:wrap;gap:10px}',
+    '.err{color:var(--rb-error);font-size:13px;line-height:1.4;margin:6px 0 0 20px}',
+    '.err:empty{display:none}',
+    /* chips */
+    '.chips{display:flex;flex-wrap:wrap;gap:8px}',
     '.chip{position:relative}',
-    '.chip input{position:absolute;opacity:0;inset:0;cursor:pointer}',
-    '.chip span{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid var(--rb-line);background:#fff;font-size:15px;cursor:pointer;transition:all .15s}',
+    '.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}',
+    '.chip span{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--rb-line);background:#fff;font-size:15px;cursor:pointer;transition:background .15s,border-color .15s}',
     '.chip span svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.4;display:none}',
     '.chip input:checked+span{background:var(--rb-accent);border-color:var(--rb-accent)}',
     '.chip input:checked+span svg{display:block}',
     '.chip input:focus-visible+span{box-shadow:0 0 0 3px rgba(249,151,134,.4)}',
-    '.consent{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.45;color:var(--rb-muted)}',
-    '.consent input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--rb-accent);flex:none}',
-    '.consent a{color:inherit}',
-    '.actions{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:28px}',
-    '.actions.single{justify-content:flex-end}',
-    'button{font:inherit;cursor:pointer;border:0}',
-    '.btn{background:var(--rb-accent);color:#111;font-weight:700;font-size:16px;padding:14px 30px;border-radius:999px;white-space:nowrap;transition:background .15s,transform .1s;display:inline-flex;align-items:center;gap:10px}',
+    '.invalid .chip span{border-color:var(--rb-error)}',
+    /* acties */
+    '.legal{font-size:13px;line-height:1.5;color:var(--rb-muted);margin:24px 0 0}',
+    '.legal a{color:inherit}',
+    '.actions{display:flex;flex-direction:row-reverse;align-items:center;justify-content:space-between;gap:12px;margin-top:24px}',
+    '.legal+.actions{margin-top:16px}',
+    'button{font:inherit;cursor:pointer;border:0;margin:0}',
+    '.btn{background:var(--rb-accent);color:#111;font-weight:700;font-size:16px;min-height:48px;padding:0 30px;border-radius:999px;white-space:nowrap;transition:background .15s,transform .1s;display:inline-flex;align-items:center;justify-content:center;gap:10px}',
     '.btn:hover{background:var(--rb-accent-dark)}',
     '.btn:active{transform:translateY(1px)}',
+    '.btn:focus-visible,.back:focus-visible{outline:2px solid var(--rb-text);outline-offset:3px}',
     '.btn[disabled]{opacity:.6;cursor:wait}',
     '.btn .spin{width:16px;height:16px;border:2px solid rgba(0,0,0,.25);border-top-color:#111;border-radius:50%;animation:s .7s linear infinite}',
     '@keyframes s{to{transform:rotate(360deg)}}',
-    '.back{background:none;color:var(--rb-text);display:inline-flex;align-items:center;gap:4px;font-size:15px;padding:8px 0}',
+    '.back{background:none;color:var(--rb-text);display:inline-flex;align-items:center;gap:4px;font-size:15px;min-height:44px;padding:0 4px;border-radius:8px}',
     '.back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}',
-    '.formerr{background:#fff;border-left:4px solid var(--rb-error);padding:12px 16px;border-radius:8px;font-size:14px;margin-top:16px}',
-    '.done{text-align:center;padding:12px 0}',
+    '@container (max-width:420px){.actions{flex-direction:column;align-items:stretch;gap:4px}.actions .btn{width:100%}.back{align-self:center}.legal{text-align:center}}',
+    '.formerr{background:#fff;border-left:4px solid var(--rb-error);padding:12px 16px;border-radius:8px;font-size:14px;line-height:1.5;margin-top:16px}',
+    /* bedankt */
+    '.done{text-align:center;padding:8px 0}',
     '.done .tick{width:64px;height:64px;border-radius:50%;background:var(--rb-accent);display:grid;place-items:center;margin:0 auto 20px}',
     '.done .tick svg{width:30px;height:30px;fill:none;stroke:#111;stroke-width:2.6}',
-    '.done p{color:var(--rb-muted);line-height:1.55;margin:0}',
+    '.done p{color:var(--rb-muted);line-height:1.55;margin:12px 0 0;text-wrap:balance}',
     '.hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}',
-    '.inline{display:flex;gap:10px;flex-wrap:wrap}',
-    '.inline .field{flex:1 1 220px;margin:0}',
+    /* compact (footer) */
+    '.compact .head{text-align:left;margin-bottom:16px}',
+    '.compact h2{font-size:22px}',
+    '.compact .sub{margin-top:4px}',
+    '.inline{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}',
+    '.inline .field{flex:1 1 240px}',
     '.inline .btn{flex:none}',
-    '.compact h2{text-align:left;font-size:22px;margin-bottom:4px}',
-    '.compact .sub{text-align:left;margin-bottom:16px}',
-    '.compact .done{text-align:left}.compact .done .tick{margin:0 0 12px;width:44px;height:44px}',
-    '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}'
+    '@container (max-width:420px){.inline .btn{width:100%}}',
+    '.compact .legal{margin-top:10px}',
+    '.compact .done{text-align:left;display:flex;gap:14px;align-items:center}.compact .done .tick{margin:0;width:44px;height:44px;flex:none}.compact .done .tick svg{width:22px;height:22px}.compact .done p{margin:2px 0 0}',
+    '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
   ].join('');
 
   /* ---------- Hulpfuncties ---------- */
@@ -180,12 +197,9 @@
   function fieldHtml(f, id) {
     if (f.row) return '<div class="row">' + f.row.map(function (r) { return fieldHtml(r, id); }).join('') + '</div>';
     var fid = 'rb' + id + '-' + f.name;
-    var req = f.required ? ' <span class="req" aria-hidden="true">*</span>' : '';
-    if (f.type === 'consent') {
-      return '<div class="field" data-f="' + f.name + '"><label class="consent"><input type="checkbox" name="' + f.name + '" required> <span>Ik ga akkoord met het <a href="' + esc(CONFIG.privacyUrl) + '" target="_blank" rel="noopener">privacybeleid</a> en wil per e-mail contact over mijn aanvraag.</span></label><p class="err" role="alert"></p></div>';
-    }
+    var req = f.required ? '' : ' <span class="opt">(optioneel)</span>';
     if (f.type === 'chips') {
-      return '<fieldset class="field" data-f="' + f.name + '" style="border:0;padding:0;margin:0 0 20px"><legend class="l">' + esc(f.label) + req + '</legend>' +
+      return '<fieldset class="field" data-f="' + f.name + '"><legend class="l">' + esc(f.label) + req + '</legend>' +
         (f.hint ? '<p class="hint">' + esc(f.hint) + '</p>' : '') + '<div class="chips">' +
         f.options.map(function (o) { return '<label class="chip"><input type="checkbox" name="' + f.name + '" value="' + esc(o) + '"><span>' + ICONS.check + esc(o) + '</span></label>'; }).join('') +
         '</div><p class="err" role="alert"></p></fieldset>';
@@ -235,23 +249,25 @@
       var multi = steps.length > 1;
       var html = '';
       if (multi) {
+        var stepTitle = def.stepTitles && def.stepTitles[current] ? ' · ' + esc(def.stepTitles[current]) : '';
         html += '<div class="progress" aria-hidden="true"><span style="width:' + ((current + 1) / steps.length * 100) + '%"></span></div>' +
-          '<p class="stepnr">Stap ' + (current + 1) + '/' + steps.length + '</p>';
+          '<p class="stepnr"><b>Stap ' + (current + 1) + ' van ' + steps.length + '</b>' + stepTitle + '</p>';
       }
-      html += '<h2>' + esc(title) + '</h2>';
-      if (subtitle) html += '<p class="sub">' + esc(subtitle) + '</p>';
-      if (showImage && current === 0) html += '<img class="cover" src="' + esc(image) + '" alt="Brochure RelaxedBuiten" width="150" height="194" loading="lazy">';
+      html += '<div class="head"><h2>' + esc(title) + '</h2>' + (subtitle && current === 0 ? '<p class="sub">' + esc(subtitle) + '</p>' : '') + '</div>';
+      if (showImage && current === 0) html += '<img class="cover" src="' + esc(image) + '" alt="Brochure RelaxedBuiten" width="132" height="171" loading="lazy">';
       html += '<form novalidate>';
       html += '<div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>';
       var isLast = current === steps.length - 1;
+      var legal = '<p class="legal">Door te versturen gaat u akkoord met ons <a href="' + esc(CONFIG.privacyUrl) + '" target="_blank" rel="noopener">privacybeleid</a>.</p>';
       if (def.compact) {
         html += '<div class="inline">' + steps[current].map(function (f) { return fieldHtml(f, id); }).join('') +
-          '<button class="btn" type="submit">' + esc(submitLabel) + '</button></div>';
+          '<button class="btn" type="submit">' + esc(submitLabel) + '</button></div>' + legal;
       } else {
-        html += steps[current].map(function (f) { return fieldHtml(f, id); }).join('');
-        html += '<div class="actions' + (current === 0 ? ' single' : '') + '">' +
-          (current > 0 ? '<button type="button" class="back">' + ICONS.back + 'Terug</button>' : '') +
-          '<button class="btn" type="submit">' + esc(isLast ? submitLabel : 'Volgende') + '</button></div>';
+        html += '<div class="fields">' + steps[current].map(function (f) { return fieldHtml(f, id); }).join('') + '</div>';
+        if (isLast) html += legal;
+        html += '<div class="actions">' +
+          '<button class="btn" type="submit">' + esc(isLast ? submitLabel : 'Volgende') + '</button>' +
+          (current > 0 ? '<button type="button" class="back">' + ICONS.back + 'Terug</button>' : '') + '</div>';
       }
       html += '<div class="formerr" hidden role="alert"></div></form>';
       card.innerHTML = html;
@@ -269,8 +285,6 @@
         if (f.type === 'chips') {
           var sel = values[f.name] || preselect;
           els.forEach(function (el) { el.checked = sel.indexOf(el.value.toLowerCase()) > -1 || sel.indexOf(el.value) > -1; });
-        } else if (f.type === 'consent') {
-          if (els[0]) els[0].checked = !!values[f.name];
         } else if (els[0] && values[f.name]) {
           els[0].value = values[f.name];
         }
@@ -281,7 +295,6 @@
       flatFields(steps[current]).forEach(function (f) {
         var els = card.querySelectorAll('[name="' + f.name + '"]');
         if (f.type === 'chips') values[f.name] = Array.prototype.filter.call(els, function (el) { return el.checked; }).map(function (el) { return el.value; });
-        else if (f.type === 'consent') values[f.name] = els[0] && els[0].checked;
         else if (els[0]) values[f.name] = els[0].value.trim();
       });
       var hp = card.querySelector('[name="website"]');
@@ -302,7 +315,6 @@
         var v = values[f.name];
         var msg = '';
         if (f.type === 'chips') { if (f.required && (!v || !v.length)) msg = 'Kies minimaal één optie.'; }
-        else if (f.type === 'consent') { if (f.required && !v) msg = 'Vink dit aan om verder te gaan.'; }
         else if (f.required && !v) msg = 'Dit veld is verplicht.';
         else if (v && f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) msg = 'Vul een geldig e-mailadres in.';
         else if (v && f.type === 'tel' && v.replace(/\D/g, '').length < 9) msg = 'Vul een geldig telefoonnummer in.';
@@ -373,7 +385,7 @@
       } catch (e) { /* geen dataLayer */ }
       host.dispatchEvent(new CustomEvent('rb-form:success', { detail: detail, bubbles: true, composed: true }));
       if (redirect) { location.href = redirect; return; }
-      card.innerHTML = '<div class="done" role="status"><div class="tick">' + ICONS.check + '</div><h2>' + esc(def.success.title) + '</h2><p>' + esc(def.success.text) + '</p></div>';
+      card.innerHTML = '<div class="done" role="status"><div class="tick">' + ICONS.check + '</div><div><h2>' + esc(def.success.title) + '</h2><p>' + esc(def.success.text) + '</p></div></div>';
     }
 
     render();
@@ -383,7 +395,7 @@
     (scope || document).querySelectorAll('[data-rb-form]').forEach(mount);
   }
 
-  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.0.0' };
+  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.1.0' };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); });
   else init();
