@@ -11,7 +11,7 @@ Embedbare formulieren voor [relaxedbuiten.nl](https://relaxedbuiten.nl). Elke in
 **1. Script één keer site-breed** (Site settings → Custom code → Footer):
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/flitsdigital/relaxedbuiten@1.3.0/dist/rb-forms.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/flitsdigital/relaxedbuiten@8a9886226f0531564f08fe91e7093ebfbd652da9/dist/rb-forms.min.js" defer></script>
 ```
 
 **2. Formulier plaatsen** met een *Embed*-element op de plek waar het formulier moet komen:
@@ -79,4 +79,4 @@ De workflow herkent het formulier aan de naam en zet de velden zelf om.
 
 Per formulier kun je met `data-webhook="https://…"` een andere webhook gebruiken, bijvoorbeeld een testworkflow.
 
-Na een wijziging: verhoog `version` in `rb-forms.js`, bouw de min-versie, commit, maak een tag (`git tag 1.3.1 && git push --tags`) en zet het nieuwe nummer in de script-URL in Webflow. Een vast versienummer wordt nooit uit een verouderde cache geladen; `@main` kan tot 12 uur oud zijn.
+Na een wijziging: verhoog `version` in `rb-forms.js`, bouw de min-versie, commit, en zet de nieuwe commit-hash (of een GitHub-release-tag) in de script-URL in Webflow. Een vaste commit of tag wordt nooit uit een verouderde cache geladen; `@main` kan tot 12 uur oud zijn.
