@@ -2,7 +2,7 @@
  * RelaxedBuiten formulieren — embedbaar formuliercomponent
  * Gebruik: <div data-rb-form="brochure"></div>
  *          <script src="https://cdn.jsdelivr.net/gh/flitsdigital/relaxedbuiten@main/dist/rb-forms.min.js" defer></script>
- * Varianten: brochure | offerte | contact | brochure-mini
+ * Varianten: brochure | offerte | contact | showroom | offerte-hero | brochure-mini
  * Docs: https://github.com/flitsdigital/relaxedbuiten
  */
 (function () {
@@ -13,6 +13,8 @@
   var CONFIG = Object.assign({
     webhook: 'https://flitsdigital01.app.n8n.cloud/webhook/relaxedbuiten-formulieren',
     brochureImage: CDN + 'brochure/cover.jpg',
+    /* showroom dicht: 'MM-DD' elk jaar of 'YYYY-MM-DD' eenmalig */
+    showroomClosed: ['12-25', '12-26', '12-31', '01-01', '04-27'],
     privacyUrl: '/privacy-beleid',
     phone: '+31657109638',
     phoneLabel: '06 57 10 96 38',
@@ -20,6 +22,30 @@
   }, window.RBFormsConfig || {});
 
   var INTERESSES = ['Hottub', 'Sauna', 'Jacuzzi', 'Wellness huisje'];
+
+  /* Showroom: vrijdag en zaterdag, vanaf morgen, de komende 8 weken; elk heel uur van 08:00 t/m 16:00 */
+  var DAGEN = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+  var MAANDEN = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function showroomDates() {
+    var out = [];
+    var d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() + 1);
+    for (var i = 0; i < 56; i++, d.setDate(d.getDate() + 1)) {
+      var wd = d.getDay();
+      if (wd !== 5 && wd !== 6) continue;
+      var md = pad(d.getMonth() + 1) + '-' + pad(d.getDate()), ymd = d.getFullYear() + '-' + md;
+      if (CONFIG.showroomClosed.indexOf(md) > -1 || CONFIG.showroomClosed.indexOf(ymd) > -1) continue;
+      out.push({
+        value: ymd,
+        label: DAGEN[wd] + ' ' + d.getDate() + ' ' + MAANDEN[d.getMonth()] + ' ' + d.getFullYear(),
+        main: DAGEN[wd] + ' ' + d.getDate() + ' ' + MAANDEN[d.getMonth()]
+      });
+    }
+    return out;
+  }
+  var TIJDEN = [];
+  for (var h = 8; h <= 16; h++) TIJDEN.push({ value: pad(h) + ':00', label: pad(h) + ':00', main: pad(h) + ':00 uur' });
+
 
   /* ---------- Formulierdefinities ---------- */
   var FORMS = {
@@ -57,6 +83,28 @@
         [
           { name: 'interesse', label: 'Waar heeft u interesse in?', hint: 'Meerdere opties mogelijk', type: 'chips', options: INTERESSES, required: true },
           { name: 'bericht', label: 'Heeft u nog vragen of opmerkingen?', type: 'textarea', placeholder: 'Bijv. gewenste maat, levering of plaatsing' }
+        ]
+      ]
+    },
+    showroom: {
+      title: 'Plan een bezoek aan de showroom',
+      subtitle: 'In onze showroom in Ruinen ziet en voelt u de hottubs, sauna\'s en jacuzzi\'s in het echt. We zijn op vrijdag en zaterdag open op afspraak.',
+      stepTitles: ['Wanneer', 'Uw gegevens'],
+      submit: 'Afspraak aanvragen',
+      success: { title: 'Bedankt voor uw aanvraag!', text: 'U wilt graag langskomen op {datum_label} rond {tijd} uur. Dit is nog geen definitieve afspraak: binnen 2 werkdagen ontvangt u een mail met een bevestiging of een voorstel voor een ander moment.' },
+      steps: [
+        [
+          { name: 'datum', type: 'select', label: 'Welke dag?', placeholder: 'Kies een vrijdag of zaterdag', required: true, options: showroomDates, labelField: 'datum_label', errorMsg: 'Kies een dag.' },
+          { name: 'tijd', type: 'select', label: 'Hoe laat ongeveer?', placeholder: 'Kies een tijd', required: true, options: TIJDEN, errorMsg: 'Kies een tijd.' },
+          { name: 'interesse', label: 'Wat wilt u graag bekijken?', hint: 'Meerdere opties mogelijk', type: 'chips', options: INTERESSES },
+          { type: 'note', text: 'Dit is een voorkeur, nog geen reservering. Binnen 2 werkdagen ontvangt u een mail met een bevestiging of een voorstel voor een ander moment.' }
+        ],
+        [
+          { type: 'recap', text: 'Uw voorkeur: {datum_label} rond {tijd} uur' },
+          { name: 'naam', label: 'Naam', required: true, autocomplete: 'name' },
+          { row: [{ name: 'email', label: 'E-mailadres', type: 'email', required: true, placeholder: 'naam@voorbeeld.nl', icon: 'mail', autocomplete: 'email' },
+                  { name: 'telefoon', label: 'Telefoonnummer', type: 'tel', placeholder: '+31 6 1234567', icon: 'phone', autocomplete: 'tel' }] },
+          { name: 'bericht', label: 'Opmerkingen', type: 'textarea', placeholder: 'Bijv. met hoeveel personen u komt of wat u specifiek wilt zien' }
         ]
       ]
     },
@@ -181,6 +229,14 @@
     '.chip input:checked+span .ic{stroke:#111}',
     '.chip input:focus-visible+span{box-shadow:0 0 0 3px rgba(249,151,134,.4)}',
     '.invalid .chip span{border-color:var(--rb-error)}',
+    /* dropdown (datum/tijd) */
+    'select{display:block;width:100%;font:inherit;font-size:16px;line-height:1.4;color:var(--rb-field-text);background:var(--rb-field-bg) url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23777%27 stroke-width=%271.8%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27m6 9 6 6 6-6%27/%3E%3C/svg%3E") no-repeat right 18px center/18px;border:1px solid var(--rb-line);border-radius:999px;padding:0 46px 0 20px;height:48px;outline:none;cursor:pointer;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none;text-overflow:ellipsis}',
+    'select.empty{color:#9a9a9a}',
+    'select option{color:#111}',
+    'select:focus{border-color:var(--rb-accent);box-shadow:0 0 0 3px rgba(249,151,134,.25)}',
+    '.invalid select{border-color:var(--rb-error)}',
+    '.note{font-size:14px;line-height:1.5;color:var(--rb-muted);margin:0}',
+    '.recap{font-size:15px;line-height:1.5;margin:0;padding:12px 18px;border-radius:16px;background:var(--rb-field-bg);color:var(--rb-field-text)}',
     /* acties */
     '.legal{font-size:13px;line-height:1.5;color:var(--rb-muted);margin:24px 0 0}',
     '.legal a{color:inherit}',
@@ -269,10 +325,20 @@
     return u;
   }
 
-  function fieldHtml(f, id) {
-    if (f.row) return '<div class="row">' + f.row.map(function (r) { return fieldHtml(r, id); }).join('') + '</div>';
+  function fieldHtml(f, id, vals) {
+    if (f.row) return '<div class="row">' + f.row.map(function (r) { return fieldHtml(r, id, vals); }).join('') + '</div>';
     var fid = 'rb' + id + '-' + f.name;
     var req = f.required ? '' : ' <span class="opt">(optioneel)</span>';
+    if (f.type === 'note') return '<p class="note">' + esc(f.text) + '</p>';
+    if (f.type === 'recap') return '<p class="recap">' + esc(f.text.replace(/\{(\w+)\}/g, function (m, k) { return (vals && vals[k]) || ''; })) + '</p>';
+    if (f.type === 'select') {
+      var opts = typeof f.options === 'function' ? f.options() : f.options;
+      return '<div class="field" data-f="' + f.name + '"><label class="l" for="' + fid + '">' + esc(f.label) + req + '</label>' +
+        '<div class="ctrl"><select id="' + fid + '" name="' + f.name + '" class="empty"' + (f.required ? ' required' : '') + '>' +
+        '<option value="" disabled selected>' + esc(f.placeholder || 'Maak een keuze') + '</option>' +
+        opts.map(function (o) { return '<option value="' + esc(o.value) + '" data-label="' + esc(o.label) + '">' + esc(o.main || o.label) + '</option>'; }).join('') +
+        '</select></div><p class="err" role="alert"></p></div>';
+    }
     if (f.type === 'chips') {
       return '<fieldset class="field" data-f="' + f.name + '"><legend class="l">' + esc(f.label) + req + '</legend>' +
         (f.hint ? '<p class="hint">' + esc(f.hint) + '</p>' : '') + '<div class="chips">' +
@@ -290,7 +356,7 @@
 
   function flatFields(step) {
     var out = [];
-    step.forEach(function (f) { if (f.row) out = out.concat(f.row); else out.push(f); });
+    step.forEach(function (f) { if (f.row) out = out.concat(f.row); else if (f.name) out.push(f); });
     return out;
   }
 
@@ -346,10 +412,10 @@
       var isLast = current === steps.length - 1;
       var legal = '<p class="legal">Door te versturen gaat u akkoord met ons <a href="' + esc(CONFIG.privacyUrl) + '" target="_blank" rel="noopener">privacybeleid</a>.</p>';
       if (def.compact) {
-        html += '<div class="inline">' + steps[current].map(function (f) { return fieldHtml(f, id); }).join('') +
+        html += '<div class="inline">' + steps[current].map(function (f) { return fieldHtml(f, id, values); }).join('') +
           '<button class="btn" type="submit">' + esc(submitLabel) + '</button></div>' + legal;
       } else {
-        html += '<div class="fields">' + steps[current].map(function (f) { return fieldHtml(f, id); }).join('') + '</div>';
+        html += '<div class="fields">' + steps[current].map(function (f) { return fieldHtml(f, id, values); }).join('') + '</div>';
         if (isLast) html += legal;
         html += '<div class="actions">' +
           '<button class="btn" type="submit">' + esc(isLast ? submitLabel : 'Volgende') + '</button>' +
@@ -364,6 +430,9 @@
         var fld = e.target.closest('.field'); if (fld) setErr(fld, '');
         if (!started && e.target.name !== 'website') { started = true; push({ event: 'rb_form_start', rb_form: variant, rb_form_type: formType }); }
       });
+      form.addEventListener('change', function (e) {
+        if (e.target.tagName === 'SELECT') { e.target.classList.toggle('empty', !e.target.value); var fld = e.target.closest('.field'); if (fld) setErr(fld, ''); if (!started) { started = true; push({ event: 'rb_form_start', rb_form: variant, rb_form_type: formType }); } }
+      });
       var back = card.querySelector('.back');
       if (back) back.addEventListener('click', function () { collect(); current--; render(); focusFirst(); });
     }
@@ -371,7 +440,9 @@
     function restore() {
       flatFields(steps[current]).forEach(function (f) {
         var els = card.querySelectorAll('[name="' + f.name + '"]');
-        if (f.type === 'chips') {
+        if (f.type === 'select') {
+          if (els[0] && values[f.name]) { els[0].value = values[f.name]; els[0].classList.toggle('empty', !els[0].value); }
+        } else if (f.type === 'chips') {
           var sel = values[f.name] || preselect;
           els.forEach(function (el) { el.checked = sel.indexOf(el.value.toLowerCase()) > -1 || sel.indexOf(el.value) > -1; });
         } else if (els[0] && values[f.name]) {
@@ -383,7 +454,11 @@
     function collect() {
       flatFields(steps[current]).forEach(function (f) {
         var els = card.querySelectorAll('[name="' + f.name + '"]');
-        if (f.type === 'chips') values[f.name] = Array.prototype.filter.call(els, function (el) { return el.checked; }).map(function (el) { return el.value; });
+        if (f.type === 'select') {
+          var o = els[0] && els[0].selectedOptions ? els[0].selectedOptions[0] : null;
+          values[f.name] = els[0] ? els[0].value : '';
+          if (f.labelField) values[f.labelField] = o && o.value ? o.getAttribute('data-label') : '';
+        } else if (f.type === 'chips') values[f.name] = Array.prototype.filter.call(els, function (el) { return el.checked; }).map(function (el) { return el.value; });
         else if (els[0]) values[f.name] = els[0].value.trim();
       });
       var hp = card.querySelector('[name="website"]');
@@ -403,7 +478,8 @@
         var fld = card.querySelector('[data-f="' + f.name + '"]');
         var v = values[f.name];
         var msg = '';
-        if (f.type === 'chips') { if (f.required && (!v || !v.length)) msg = 'Kies minimaal één optie.'; }
+        if (f.type === 'select') { if (f.required && !v) msg = f.errorMsg || 'Maak een keuze.'; }
+        else if (f.type === 'chips') { if (f.required && (!v || !v.length)) msg = 'Kies minimaal één optie.'; }
         else if (f.required && !v) msg = 'Dit veld is verplicht.';
         else if (v && f.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) msg = 'Vul een geldig e-mailadres in.';
         else if (v && f.type === 'tel' && v.replace(/\D/g, '').length < 9) msg = 'Vul een geldig telefoonnummer in.';
@@ -411,13 +487,13 @@
         if (msg) { ok = false; if (!first && fld) first = fld; }
       });
       if (first) {
-        var inp = first.querySelector('input,textarea'); if (inp) inp.focus();
+        var inp = first.querySelector('input,select,textarea'); if (inp) try { inp.focus({ preventScroll: false }); } catch (e) { inp.focus(); }
         push({ event: 'rb_form_error', rb_form: variant, rb_form_type: formType, rb_field: first.getAttribute('data-f'), rb_step: current + 1 });
       }
       return ok;
     }
 
-    function focusFirst() { var i = card.querySelector('input:not([tabindex="-1"]),textarea'); if (i) try { i.focus({ preventScroll: true }); } catch (e) { i.focus(); } }
+    function focusFirst() { var i = card.querySelector('input:not([tabindex="-1"]),select,textarea'); if (i) try { i.focus({ preventScroll: true }); } catch (e) { i.focus(); } }
 
     function onSubmit(e) {
       e.preventDefault();
@@ -484,7 +560,7 @@
         eventCallback: go || undefined, eventTimeout: 1500 });
       host.dispatchEvent(new CustomEvent('rb-form:success', { detail: detail, bubbles: true, composed: true }));
       if (redirect) return;
-      card.innerHTML = '<div class="done" role="status"><div class="tick">' + ICONS.check + '</div><div><h2>' + esc(def.success.title) + '</h2><p>' + esc(def.success.text) + '</p></div></div>';
+      card.innerHTML = '<div class="done" role="status"><div class="tick">' + ICONS.check + '</div><div><h2>' + esc(def.success.title) + '</h2><p>' + esc(def.success.text.replace(/\{(\w+)\}/g, function (m, k) { return values[k] || ''; })) + '</p></div></div>';
     }
 
     render();
@@ -528,7 +604,7 @@
     });
   }
 
-  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.5.0' };
+  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.6.0' };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); });
   else init();

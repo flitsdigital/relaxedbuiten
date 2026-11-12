@@ -26,6 +26,7 @@ Embedbare formulieren voor [relaxedbuiten.nl](https://relaxedbuiten.nl). Elke in
 | `offerte` | 2 stappen: naam, e-mail, telefoon → interesse (verplicht) en vragen. Klant krijgt bevestiging + brochure. |
 | `contact` | 1 stap: naam, e-mail, telefoon (optioneel) en bericht. |
 | `offerte-hero` | Voornaam, e-mail en telefoon + knop op één regel, voor in de hero (op mobiel onder elkaar). Telt als offerteaanvraag: klant krijgt bevestiging + brochure. |
+| `showroom` | Bezoek aan de showroom in Ruinen aanvragen, in 2 stappen: dag (komende vrijdagen en zaterdagen), tijd (08:00 t/m 16:00) en wat men wil zien; daarna naam, e-mail, telefoon en opmerkingen. Het is een voorkeur, geen reservering. Gesloten dagen staan in `RBFormsConfig.showroomClosed`. |
 | `brochure-mini` | Alleen e-mailadres + knop, voor de footer. Klant krijgt de brochure. |
 
 ### Opties (data-attributen)
