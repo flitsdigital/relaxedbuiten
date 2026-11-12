@@ -15,7 +15,8 @@
     brochureImage: CDN + 'brochure/cover.jpg',
     privacyUrl: '/privacy-beleid',
     phone: '+31657109638',
-    phoneLabel: '06 57 10 96 38'
+    phoneLabel: '06 57 10 96 38',
+    consentKey: 'relaxedbuiten_consent'
   }, window.RBFormsConfig || {});
 
   var INTERESSES = ['Hottub', 'Sauna', 'Jacuzzi', 'Wellness huisje'];
@@ -226,17 +227,47 @@
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   var uid = 0;
 
+  /* Toestemming uit de Flits-cookiebanner (localStorage 'relaxedbuiten_consent') */
+  function hasConsent(kind) {
+    try { var c = JSON.parse(localStorage.getItem(CONFIG.consentKey) || 'null'); return !!(c && c.c && c.c[kind]); } catch (e) { return false; }
+  }
+  /* Campagnegegevens: utm_* altijd van de huidige URL; bewaren en gclid/fbclid alleen met toestemming voor marketing */
   function readUtm() {
     var keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+    var marketing = hasConsent('marketing');
     var out = {};
     var stored = {};
-    try { stored = JSON.parse(sessionStorage.getItem('rb_utm') || '{}'); } catch (e) { stored = {}; }
+    if (marketing) { try { stored = JSON.parse(sessionStorage.getItem('rb_utm') || '{}'); } catch (e) { stored = {}; } }
     var params = new URLSearchParams(location.search);
-    keys.forEach(function (k) { var v = params.get(k) || stored[k]; if (v) out[k] = v; });
-    try { sessionStorage.setItem('rb_utm', JSON.stringify(out)); } catch (e) { /* geen storage */ }
+    keys.forEach(function (k) {
+      if (!marketing && (k === 'gclid' || k === 'fbclid')) return;
+      var v = params.get(k) || stored[k]; if (v) out[k] = v;
+    });
+    if (marketing) { try { sessionStorage.setItem('rb_utm', JSON.stringify(out)); } catch (e) { /* geen storage */ } }
     return out;
   }
-  var UTM = readUtm();
+  readUtm();
+
+  /* ---------- Meten (dataLayer voor GTM) ---------- */
+  function push(obj) { try { window.dataLayer = window.dataLayer || []; window.dataLayer.push(obj); } catch (e) { /* geen dataLayer */ } }
+  function phoneE164(v) {
+    var d = String(v || '').replace(/[^\d+]/g, '');
+    if (!d) return '';
+    if (d.indexOf('+') === 0) return d;
+    if (d.indexOf('00') === 0) return '+' + d.slice(2);
+    if (d.indexOf('31') === 0 && d.length >= 11) return '+' + d;
+    if (d.indexOf('0') === 0) return '+31' + d.slice(1);
+    return d;
+  }
+  function userData(v) {
+    var first = v.voornaam || (v.naam ? String(v.naam).split(' ')[0] : '');
+    var last = v.achternaam || (v.naam && String(v.naam).indexOf(' ') > 0 ? String(v.naam).split(' ').slice(1).join(' ') : '');
+    var u = {};
+    if (v.email) u.email = String(v.email).trim().toLowerCase();
+    if (v.telefoon) u.phone_number = phoneE164(v.telefoon);
+    if (first || last) u.address = { first_name: first, last_name: last, country: 'NL' };
+    return u;
+  }
 
   function fieldHtml(f, id) {
     if (f.row) return '<div class="row">' + f.row.map(function (r) { return fieldHtml(r, id); }).join('') + '</div>';
@@ -298,6 +329,7 @@
     if (window.ResizeObserver) new ResizeObserver(function (e) { sizeTo(e[0].contentRect.width); }).observe(wrapEl);
 
     var values = {};
+    var started = false;
 
     function render() {
       var multi = steps.length > 1;
@@ -328,7 +360,10 @@
       restore();
       var form = card.querySelector('form');
       form.addEventListener('submit', onSubmit);
-      form.addEventListener('input', function (e) { var fld = e.target.closest('.field'); if (fld) setErr(fld, ''); });
+      form.addEventListener('input', function (e) {
+        var fld = e.target.closest('.field'); if (fld) setErr(fld, '');
+        if (!started && e.target.name !== 'website') { started = true; push({ event: 'rb_form_start', rb_form: variant, rb_form_type: formType }); }
+      });
       var back = card.querySelector('.back');
       if (back) back.addEventListener('click', function () { collect(); current--; render(); focusFirst(); });
     }
@@ -375,7 +410,10 @@
         if (fld) setErr(fld, msg);
         if (msg) { ok = false; if (!first && fld) first = fld; }
       });
-      if (first) { var inp = first.querySelector('input,textarea'); if (inp) inp.focus(); }
+      if (first) {
+        var inp = first.querySelector('input,textarea'); if (inp) inp.focus();
+        push({ event: 'rb_form_error', rb_form: variant, rb_form_type: formType, rb_field: first.getAttribute('data-f'), rb_step: current + 1 });
+      }
       return ok;
     }
 
@@ -385,7 +423,7 @@
       e.preventDefault();
       collect();
       if (!validate()) return;
-      if (current < steps.length - 1) { current++; render(); focusFirst(); return; }
+      if (current < steps.length - 1) { current++; push({ event: 'rb_form_step', rb_form: variant, rb_form_type: formType, rb_step: current + 1 }); render(); focusFirst(); return; }
       send();
     }
 
@@ -399,7 +437,9 @@
       var body = new URLSearchParams();
       body.append('form', variant);
       body.append('type', formType);
-      body.append('pagina', location.href.split('#')[0]);
+      var pageUrl = location.href.split('#')[0];
+      if (!hasConsent('marketing')) { try { var pu = new URL(pageUrl); ['gclid', 'fbclid', 'gbraid', 'wbraid', 'msclkid'].forEach(function (k) { pu.searchParams.delete(k); }); pageUrl = pu.toString(); } catch (e) { pageUrl = pageUrl.split('?')[0]; } }
+      body.append('pagina', pageUrl);
       body.append('referrer', document.referrer || '');
       Object.keys(values).forEach(function (k) {
         var v = values[k];
@@ -407,7 +447,8 @@
         if (typeof v === 'boolean') v = v ? 'ja' : '';
         if (v) body.append(k, v);
       });
-      Object.keys(UTM).forEach(function (k) { body.append(k, UTM[k]); });
+      var utm = readUtm();
+      Object.keys(utm).forEach(function (k) { body.append(k, utm[k]); });
 
       var ctrl = window.AbortController ? new AbortController() : null;
       var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 20000);
@@ -433,12 +474,16 @@
 
     function success() {
       var detail = { form: variant, type: formType, interesse: (values.interesse || []).join(', ') };
-      try {
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ event: 'rb_form_submit', rb_form: variant, rb_form_type: formType });
-      } catch (e) { /* geen dataLayer */ }
+      var go = null;
+      if (redirect) {
+        var done = false;
+        go = function () { if (!done) { done = true; location.href = redirect; } };
+        setTimeout(go, 1500);
+      }
+      push({ event: 'rb_form_submit', rb_form: variant, rb_form_type: formType, rb_interest: detail.interesse, user_data: userData(values),
+        eventCallback: go || undefined, eventTimeout: 1500 });
       host.dispatchEvent(new CustomEvent('rb-form:success', { detail: detail, bubbles: true, composed: true }));
-      if (redirect) { location.href = redirect; return; }
+      if (redirect) return;
       card.innerHTML = '<div class="done" role="status"><div class="tick">' + ICONS.check + '</div><div><h2>' + esc(def.success.title) + '</h2><p>' + esc(def.success.text) + '</p></div></div>';
     }
 
@@ -447,9 +492,43 @@
 
   function init(scope) {
     (scope || document).querySelectorAll('[data-rb-form]').forEach(mount);
+    watchWebflowForms(scope || document);
   }
 
-  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.4.0' };
+  /* Gewone Webflow-formulieren met 'aanvraag' in de naam (de configurators): meld een geslaagde inzending
+     zodra Webflow het succesbericht toont, in hetzelfde formaat als de embed-formulieren. */
+  function watchWebflowForms(scope) {
+    if (!window.MutationObserver) return;
+    scope.querySelectorAll('.w-form').forEach(function (wrap) {
+      var form = wrap.querySelector('form');
+      var ok = wrap.querySelector('.w-form-done');
+      if (!form || !ok || wrap.__rbWatched) return;
+      var name = form.getAttribute('data-name') || form.getAttribute('name') || '';
+      if (!/aanvraag/i.test(name)) return;
+      wrap.__rbWatched = true;
+      var product = (name.match(/hottub|sauna|jacuzzi/i) || ['configurator'])[0].toLowerCase();
+      var startedWf = false;
+      form.addEventListener('input', function () { if (!startedWf) { startedWf = true; push({ event: 'rb_form_start', rb_form: 'configurator-' + product, rb_form_type: 'configurator' }); } });
+      var sent = false;
+      new MutationObserver(function () {
+        if (sent || getComputedStyle(ok).display === 'none') return;
+        sent = true;
+        var v = {};
+        Array.prototype.forEach.call(form.elements, function (el) {
+          if (!el.name) return;
+          var k = el.name.toLowerCase().replace(/[^a-z]/g, '');
+          if (/^(email|emailadres|mail)$/.test(k)) v.email = el.value;
+          else if (/^(telefoon|telefoonnummer|phone|tel)$/.test(k)) v.telefoon = el.value;
+          else if (/^(naam|name)$/.test(k)) v.naam = el.value;
+          else if (/^(voornaam|firstname)$/.test(k)) v.voornaam = el.value;
+          else if (/^(achternaam|lastname)$/.test(k)) v.achternaam = el.value;
+        });
+        push({ event: 'rb_form_submit', rb_form: 'configurator-' + product, rb_form_type: 'configurator', rb_interest: product.charAt(0).toUpperCase() + product.slice(1), user_data: userData(v) });
+      }).observe(ok, { attributes: true, attributeFilter: ['style', 'class'] });
+    });
+  }
+
+  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.5.0' };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); });
   else init();

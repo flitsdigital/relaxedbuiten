@@ -54,14 +54,22 @@ Beschikbaar: `--rb-accent`, `--rb-accent-dark`, `--rb-bg`, `--rb-text`, `--rb-mu
 
 De knoppen gebruiken de Webflow-variabelen van de site, net als `.button`: `--_primitives---colors--persimmon` (achtergrond), `--_primitives---colors--white` (tekst) en `--_typography---font-styles--heading` (lettertype). Wijzig je die variabelen in Webflow, dan veranderen de knoppen mee. Zonder die variabelen valt het formulier terug op zalm met donkere tekst. Overschrijven kan per formulier met `--rb-btn-bg`, `--rb-btn-text` en `--rb-btn-font`.
 
-### Conversies meten
+### Conversies meten (GTM)
 
-Na een geslaagde inzending:
+Het component zet deze events in de `dataLayer`:
 
-- `dataLayer.push({ event: 'rb_form_submit', rb_form: 'brochure', rb_form_type: 'brochure' })` voor GTM / Google Ads;
-- een `rb-form:success` event op het element (`detail.form`, `detail.type`, `detail.interesse`).
+| Event | Wanneer | Velden |
+|---|---|---|
+| `rb_form_start` | Eerste invoer in een formulier | `rb_form`, `rb_form_type` |
+| `rb_form_step` | Naar stap 2 | + `rb_step` |
+| `rb_form_error` | Validatiefout | + `rb_field`, `rb_step` |
+| `rb_form_submit` | Geslaagde inzending | + `rb_interest`, `user_data` (e-mail, telefoon in +31-formaat, voor- en achternaam) |
 
-UTM-parameters, `gclid` en `fbclid` worden automatisch meegestuurd.
+`rb_form_type` is `brochure`, `offerte`, `contact` of `configurator`. De Webflow-formulieren met "aanvraag" in de naam (de configurators) melden zich ook, zodra Webflow het succesbericht toont, als `configurator-hottub`, `configurator-sauna` of `configurator-jacuzzi`. Bij `data-redirect` wacht het formulier tot GTM klaar is (max. 1,5 s).
+
+`gtm/relaxedbuiten-gtm-import.json` is een GTM-container om te importeren (Admin → Import container) met GA4, Google Ads (conversie + enhanced conversions), Meta Pixel, Hotjar en klikmeting op bellen, mail en WhatsApp. Alles vuurt pas na toestemming via de Flits-cookiebanner (`consent_update`).
+
+**Privacy:** UTM-parameters gaan altijd mee met een inzending. `gclid`/`fbclid` en het bewaren van campagnegegevens tussen pagina's gebeuren alleen met toestemming voor marketing (`localStorage.relaxedbuiten_consent`, instelbaar via `RBFormsConfig.consentKey`).
 
 ## Bestaande Webflow-formulieren koppelen
 
