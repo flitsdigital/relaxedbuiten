@@ -119,14 +119,18 @@
 
   /* ---------- Styles (in Shadow DOM, dus geen botsing met Webflow-CSS) ---------- */
   var CSS = [
-    ':host{--rb-accent:#F99786;--rb-accent-dark:#ef7f6a;--rb-bg:#f2f2f2;--rb-text:#111;--rb-muted:#6b6b6b;--rb-line:#d9d9d9;--rb-error:#d64545;--rb-radius:28px;--rb-field-text:#111;--rb-field-bg:#fff;',
+    ':host{--rb-accent:#F99786;--rb-accent-dark:#ef7f6a;--rb-bg:#f2f2f2;--rb-text:#111;--rb-muted:#6b6b6b;--rb-line:#d9d9d9;--rb-error:#d64545;--rb-radius:28px;--rb-field-text:#111;--rb-field-bg:#fff;--rb-btn-bg:var(--_primitives---colors--persimmon,var(--rb-accent));--rb-btn-text:var(--_primitives---colors--white,#111);--rb-btn-font:var(--_typography---font-styles--heading,inherit);',
     '--rb-heading-font:Montserrat,system-ui,sans-serif;display:block;font-family:inherit;color:var(--rb-text);color-scheme:light}',
     '*,*::before,*::after{box-sizing:border-box}',
-    '.wrap{container-type:inline-size;text-align:left}',
+    ':host{width:100%;min-width:0}',
+    /* breedte-klassen (ge400, le420, …) zet een ResizeObserver; geen container queries, die maken de intrinsieke breedte 0 */
+    '.wrap{width:100%;text-align:left}',
+    /* onzichtbare regel met veel woorden: maakt de voorkeursbreedte groot en de minimale breedte klein, zodat het formulier in flex-containers de ruimte vult */
+    '.sizer{height:0;overflow:hidden;visibility:hidden;font-size:8px;line-height:0}',
     /* kaart: padding schaalt mee met de breedte van het formulier */
     '.card{background:var(--rb-bg);border-radius:var(--rb-radius);padding:28px 22px;max-width:560px;margin:0 auto}',
-    '@container (min-width:440px){.card{padding:40px}}',
-    '@container (min-width:540px){.card{padding:48px}}',
+    '.ge440 .card{padding:40px}',
+    '.ge540 .card{padding:48px}',
     '.compact .card{max-width:none;padding:0;background:transparent}',
     /* data-card="false": alleen velden en knop, voor in een bestaande layout */
     '.plain .card{max-width:none;padding:0;background:transparent;border-radius:0}',
@@ -140,14 +144,14 @@
     '.stepnr b{color:var(--rb-text);font-weight:600}',
     /* kop */
     '.head{margin:0 0 28px;text-align:center}',
-    'h2{font-family:var(--rb-heading-font);font-weight:700;font-size:30px;font-size:clamp(24px,7.2cqi,34px);line-height:1.18;margin:0;letter-spacing:-.01em;text-wrap:balance}',
+    'h2{font-family:var(--rb-heading-font);font-weight:700;font-size:30px;font-size:clamp(24px,calc(var(--rb-w,480px) * .072),34px);line-height:1.18;margin:0;letter-spacing:-.01em;text-wrap:balance}',
     '.sub{color:var(--rb-muted);margin:10px 0 0;line-height:1.5;font-size:15px;text-wrap:balance}',
     '.cover{display:block;width:132px;height:auto;margin:-4px auto 36px;transform:perspective(600px) rotateX(18deg) rotateZ(-16deg);box-shadow:-10px 14px 22px rgba(0,0,0,.22);border-radius:3px}',
     /* velden: één ritme van 20px, ook als een rij onder elkaar valt */
     '.fields{display:grid;gap:20px}',
     '.row{display:grid;grid-template-columns:1fr;gap:20px 16px}',
     /* naast elkaar pas vanaf 500px; subgrid houdt labels, velden en foutmeldingen op één lijn */
-    '@container (min-width:500px){.row{grid-template-columns:1fr 1fr;row-gap:0}.row>.field{display:grid;grid-template-rows:subgrid;grid-row:span 3;row-gap:0;align-content:start}.row>.field>.l{align-self:end}}',
+    '.ge500 .row{grid-template-columns:1fr 1fr;row-gap:0}.ge500 .row>.field{display:grid;grid-template-rows:subgrid;grid-row:span 3;row-gap:0;align-content:start}.ge500 .row>.field>.l{align-self:end}',
     '.field{margin:0;min-width:0}',
     'fieldset.field{border:0;padding:0}',
     '.l{display:block;font-size:16px;line-height:1.3;margin:0 0 8px;padding:0}',
@@ -165,7 +169,7 @@
     '.err:empty{display:none}',
     /* chips */
     '.chips{display:grid;grid-template-columns:1fr;gap:8px}',
-    '@container (min-width:400px){.chips{grid-template-columns:repeat(2,minmax(0,1fr))}}',
+    '.ge400 .chips{grid-template-columns:repeat(2,minmax(0,1fr))}',
     '.chip{min-width:0}',
     '.chip{position:relative}',
     '.chip input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}',
@@ -182,16 +186,16 @@
     '.actions{display:flex;flex-direction:row-reverse;align-items:center;justify-content:space-between;gap:12px;margin-top:24px}',
     '.legal+.actions{margin-top:16px}',
     'button{font:inherit;cursor:pointer;border:0;margin:0}',
-    '.btn{background:var(--rb-accent);color:#111;font-weight:700;font-size:16px;min-height:48px;padding:0 30px;border-radius:999px;white-space:nowrap;transition:background .15s,transform .1s;display:inline-flex;align-items:center;justify-content:center;gap:10px}',
-    '.btn:hover{background:var(--rb-accent-dark)}',
+    '.btn{background:var(--rb-btn-bg);color:var(--rb-btn-text);font-family:var(--rb-btn-font);font-weight:700;font-size:16px;min-height:48px;padding:0 1.5rem;border:1px solid transparent;border-radius:100px;white-space:nowrap;transition:filter .15s,transform .1s;display:inline-flex;align-items:center;justify-content:center;gap:10px}',
+    '.btn:hover{filter:brightness(.93)}',
     '.btn:active{transform:translateY(1px)}',
     '.btn:focus-visible,.back:focus-visible{outline:2px solid var(--rb-text);outline-offset:3px}',
-    '.btn[disabled]{cursor:wait;background:var(--rb-accent)}',
-    '.btn .spin{width:16px;height:16px;border:2px solid rgba(0,0,0,.25);border-top-color:#111;border-radius:50%;animation:s .7s linear infinite}',
+    '.btn[disabled]{cursor:wait;filter:none}',
+    '.btn .spin{width:16px;height:16px;border:2px solid currentColor;border-top-color:transparent;opacity:.85;border-radius:50%;animation:s .7s linear infinite}',
     '@keyframes s{to{transform:rotate(360deg)}}',
     '.back{background:none;color:var(--rb-text);display:inline-flex;align-items:center;gap:4px;font-size:15px;min-height:44px;padding:0 4px;border-radius:8px}',
     '.back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}',
-    '@container (max-width:420px){.actions{flex-direction:column;align-items:stretch;gap:4px}.actions .btn{width:100%}.back{align-self:center}.legal,.formerr{text-align:center}}',
+    '.le420 .actions{flex-direction:column;align-items:stretch;gap:4px}.le420 .actions .btn{width:100%}.le420 .back{align-self:center}.le420 .legal,.le420 .formerr{text-align:center}',
     '.formerr{color:var(--rb-error);font-size:14px;line-height:1.5;margin:12px 0 0}',
     /* bedankt */
     '.formerr a{color:inherit;font-weight:600;white-space:nowrap}',
@@ -207,13 +211,13 @@
     '.inline{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}',
     '.inline .field{flex:1 1 240px}',
     '.inline .btn{flex:none}',
-    '@container (max-width:420px){.inline .btn{width:100%}}',
+    '.le420 .inline .btn{width:100%}',
     '.compact .legal{margin-top:10px}',
     /* hero: velden op één regel, gecentreerd */
     '.hero .inline .field{flex:1 1 150px}',
     '.hero .legal{text-align:center;margin-top:12px}',
     '.hero .done{justify-content:center;text-align:left}',
-    '@container (max-width:560px){.hero .inline{flex-direction:column;align-items:stretch}.hero .inline .field{flex:none}.hero .inline .btn{width:100%}}',
+    '.le560.hero .inline{flex-direction:column;align-items:stretch}.le560.hero .inline .field{flex:none}.le560.hero .inline .btn{width:100%}',
     '.compact .done{text-align:left;display:flex;gap:14px;align-items:center}.compact .done .tick{margin:0;width:44px;height:44px;flex:none}.compact .done .tick svg{width:22px;height:22px}.compact .done p{margin:2px 0 0}',
     '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
   ].join('');
@@ -281,8 +285,17 @@
     var formType = def.formType || variant;
 
     var root = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
-    root.innerHTML = '<style>' + CSS + '</style><div class="wrap' + (def.compact ? ' compact' : '') + (def.hero ? ' hero' : '') + (plain ? ' plain' : '') + '"><div class="card"></div></div>';
+    root.innerHTML = '<style>' + CSS + '</style><div class="wrap' + (def.compact ? ' compact' : '') + (def.hero ? ' hero' : '') + (plain ? ' plain' : '') + '"><div class="sizer" aria-hidden="true">' + new Array(160).join('· ') + '</div><div class="card"></div></div>';
     var card = root.querySelector('.card');
+    var wrapEl = root.querySelector('.wrap');
+    var BP = { ge400: [400, 1], ge440: [440, 1], ge500: [500, 1], ge540: [540, 1], le420: [420, 0], le560: [560, 0] };
+    function sizeTo(w) {
+      if (!w) return;
+      Object.keys(BP).forEach(function (k) { wrapEl.classList.toggle(k, BP[k][1] ? w >= BP[k][0] : w <= BP[k][0]); });
+      wrapEl.style.setProperty('--rb-w', Math.round(w) + 'px');
+    }
+    sizeTo(wrapEl.getBoundingClientRect().width);
+    if (window.ResizeObserver) new ResizeObserver(function (e) { sizeTo(e[0].contentRect.width); }).observe(wrapEl);
 
     var values = {};
 
@@ -436,7 +449,7 @@
     (scope || document).querySelectorAll('[data-rb-form]').forEach(mount);
   }
 
-  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.3.0' };
+  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.4.0' };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); });
   else init();

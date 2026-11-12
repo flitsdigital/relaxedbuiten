@@ -50,6 +50,10 @@ Het formulier zit in een Shadow DOM, dus Webflow-CSS heeft er geen invloed op. A
 
 Beschikbaar: `--rb-accent`, `--rb-accent-dark`, `--rb-bg`, `--rb-text`, `--rb-muted`, `--rb-line`, `--rb-error`, `--rb-radius`, `--rb-heading-font`, plus `--rb-field-text` en `--rb-field-bg` voor de invoervelden (die blijven standaard donker op wit, ook als `--rb-text` wit is).
 
+### Knoppen in de huisstijl
+
+De knoppen gebruiken de Webflow-variabelen van de site, net als `.button`: `--_primitives---colors--persimmon` (achtergrond), `--_primitives---colors--white` (tekst) en `--_typography---font-styles--heading` (lettertype). Wijzig je die variabelen in Webflow, dan veranderen de knoppen mee. Zonder die variabelen valt het formulier terug op zalm met donkere tekst. Overschrijven kan per formulier met `--rb-btn-bg`, `--rb-btn-text` en `--rb-btn-font`.
+
 ### Conversies meten
 
 Na een geslaagde inzending:
