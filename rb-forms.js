@@ -73,6 +73,19 @@
         ]
       ]
     },
+    'offerte-hero': {
+      formType: 'offerte',
+      compact: true,
+      hero: true,
+      title: '',
+      submit: 'Aanvragen',
+      success: { title: 'Bedankt voor uw aanvraag!', text: 'We nemen binnen 2 werkdagen contact met u op. De brochure staat al in uw mailbox.' },
+      steps: [[
+        { name: 'voornaam', label: 'Voornaam', required: true, placeholder: 'Voornaam', autocomplete: 'given-name', hideLabel: true },
+        { name: 'email', label: 'E-mailadres', type: 'email', required: true, placeholder: 'E-mailadres', autocomplete: 'email', hideLabel: true },
+        { name: 'telefoon', label: 'Telefoonnummer', type: 'tel', required: true, placeholder: 'Telefoonnummer', autocomplete: 'tel', hideLabel: true }
+      ]]
+    },
     'brochure-mini': {
       formType: 'brochure',
       compact: true,
@@ -109,7 +122,7 @@
     ':host{--rb-accent:#F99786;--rb-accent-dark:#ef7f6a;--rb-bg:#f2f2f2;--rb-text:#111;--rb-muted:#6b6b6b;--rb-line:#d9d9d9;--rb-error:#d64545;--rb-radius:28px;--rb-field-text:#111;--rb-field-bg:#fff;',
     '--rb-heading-font:Montserrat,system-ui,sans-serif;display:block;font-family:inherit;color:var(--rb-text);color-scheme:light}',
     '*,*::before,*::after{box-sizing:border-box}',
-    '.wrap{container-type:inline-size}',
+    '.wrap{container-type:inline-size;text-align:left}',
     /* kaart: padding schaalt mee met de breedte van het formulier */
     '.card{background:var(--rb-bg);border-radius:var(--rb-radius);padding:28px 22px;max-width:560px;margin:0 auto}',
     '@container (min-width:440px){.card{padding:40px}}',
@@ -196,6 +209,11 @@
     '.inline .btn{flex:none}',
     '@container (max-width:420px){.inline .btn{width:100%}}',
     '.compact .legal{margin-top:10px}',
+    /* hero: velden op één regel, gecentreerd */
+    '.hero .inline .field{flex:1 1 150px}',
+    '.hero .legal{text-align:center;margin-top:12px}',
+    '.hero .done{justify-content:center;text-align:left}',
+    '@container (max-width:560px){.hero .inline{flex-direction:column;align-items:stretch}.hero .inline .field{flex:none}.hero .inline .btn{width:100%}}',
     '.compact .done{text-align:left;display:flex;gap:14px;align-items:center}.compact .done .tick{margin:0;width:44px;height:44px;flex:none}.compact .done .tick svg{width:22px;height:22px}.compact .done p{margin:2px 0 0}',
     '.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}'
   ].join('');
@@ -263,7 +281,7 @@
     var formType = def.formType || variant;
 
     var root = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
-    root.innerHTML = '<style>' + CSS + '</style><div class="wrap' + (def.compact ? ' compact' : '') + (plain ? ' plain' : '') + '"><div class="card"></div></div>';
+    root.innerHTML = '<style>' + CSS + '</style><div class="wrap' + (def.compact ? ' compact' : '') + (def.hero ? ' hero' : '') + (plain ? ' plain' : '') + '"><div class="card"></div></div>';
     var card = root.querySelector('.card');
 
     var values = {};
