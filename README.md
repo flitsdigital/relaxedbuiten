@@ -67,7 +67,7 @@ Het component zet deze events in de `dataLayer`:
 
 `rb_form_type` is `brochure`, `offerte`, `contact` of `configurator`. De Webflow-formulieren met "aanvraag" in de naam (de configurators) melden zich ook, zodra Webflow het succesbericht toont, als `configurator-hottub`, `configurator-sauna` of `configurator-jacuzzi`. Bij `data-redirect` wacht het formulier tot GTM klaar is (max. 1,5 s).
 
-`gtm/relaxedbuiten-gtm-import.json` is een GTM-container om te importeren (Admin → Import container) met GA4 (`generate_lead`, `aanvraag_<type>`, `formulier_gestart`, `formulier_stap`, `formulier_fout`, `contact_klik`) en de Meta Pixel. Alles vuurt pas na toestemming via de Flits-cookiebanner (`consent_update`). Vul na het importeren het GA4 Measurement ID in de variabele `C - GA4 Measurement ID` in.
+`gtm/relaxedbuiten-gtm-import.json` is een GTM-container om te importeren (Admin → Import container) met GA4 (`generate_lead`, `aanvraag_<type>`, `formulier_gestart`, `formulier_stap`, `formulier_fout`, `contact_klik`) en de Meta Pixel. Alles vuurt pas na toestemming via de Flits-cookiebanner (`consent_update`). GA4-property: `G-KKF49N3W41` (variabele `C - GA4 Measurement ID`).
 
 **Privacy:** UTM-parameters gaan altijd mee met een inzending. `gclid`/`fbclid` en het bewaren van campagnegegevens tussen pagina's gebeuren alleen met toestemming voor marketing (`localStorage.relaxedbuiten_consent`, instelbaar via `RBFormsConfig.consentKey`).
 

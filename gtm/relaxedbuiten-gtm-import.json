@@ -1136,10 +1136,10 @@
           {
             "type": "TEMPLATE",
             "key": "value",
-            "value": "G-XXXXXXXXXX"
+            "value": "G-KKF49N3W41"
           }
         ],
-        "notes": "VUL IN: het Measurement ID van de nieuwe GA4-property (GA4 → Beheer → Gegevensstromen → Web)."
+        "notes": "Measurement ID van de nieuwe GA4-property."
       },
       {
         "accountId": "0",
