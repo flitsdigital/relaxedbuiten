@@ -31,7 +31,8 @@ Embedbare formulieren voor [relaxedbuiten.nl](https://relaxedbuiten.nl). Elke in
 
 | Attribuut | Voorbeeld | Effect |
 |---|---|---|
-| `data-title` | `data-title="Ontvang onze brochure"` | Andere kop |
+| `data-title` | `data-title="Ontvang onze brochure"` of `data-title=""` | Andere kop, of geen kop |
+| `data-card` | `data-card="false"` | Geen grijze kaart: alleen velden en knop, links uitgelijnd. Voor in een bestaande layout (bijv. de contactpagina) |
 | `data-subtitle` | `data-subtitle=""` | Andere (of geen) ondertitel |
 | `data-button` | `data-button="Verstuur"` | Andere tekst op de verstuurknop |
 | `data-interesse` | `data-interesse="hottub"` | Interesse alvast aangevinkt (handig op productpagina's). Meerdere: `hottub,sauna` |

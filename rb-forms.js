@@ -115,6 +115,11 @@
     '@container (min-width:440px){.card{padding:40px}}',
     '@container (min-width:540px){.card{padding:48px}}',
     '.compact .card{max-width:none;padding:0;background:transparent}',
+    /* data-card="false": alleen velden en knop, voor in een bestaande layout */
+    '.plain .card{max-width:none;padding:0;background:transparent;border-radius:0}',
+    '.plain .head{text-align:left}',
+    '.plain .actions{flex-direction:row;justify-content:flex-start}',
+    '.plain .legal{text-align:left}',
     /* stappen */
     '.progress{height:4px;background:#d6d6d6;border-radius:4px;overflow:hidden;margin:0 0 12px}',
     '.progress span{display:block;height:100%;background:var(--rb-accent);border-radius:4px;transition:width .35s ease}',
@@ -245,7 +250,8 @@
     host.__rbMounted = true;
     var id = ++uid;
     var ds = host.dataset;
-    var title = ds.title || def.title;
+    var title = ds.title !== undefined ? ds.title : def.title;
+    var plain = ds.card === 'false';
     var subtitle = ds.subtitle !== undefined ? ds.subtitle : (def.subtitle || '');
     var submitLabel = ds.button || def.submit;
     var redirect = ds.redirect || '';
@@ -257,7 +263,7 @@
     var formType = def.formType || variant;
 
     var root = host.attachShadow ? host.attachShadow({ mode: 'open' }) : host;
-    root.innerHTML = '<style>' + CSS + '</style><div class="wrap' + (def.compact ? ' compact' : '') + '"><div class="card"></div></div>';
+    root.innerHTML = '<style>' + CSS + '</style><div class="wrap' + (def.compact ? ' compact' : '') + (plain ? ' plain' : '') + '"><div class="card"></div></div>';
     var card = root.querySelector('.card');
 
     var values = {};
@@ -270,7 +276,7 @@
         html += '<div class="progress" aria-hidden="true"><span style="width:' + ((current + 1) / steps.length * 100) + '%"></span></div>' +
           '<p class="stepnr"><b>Stap ' + (current + 1) + ' van ' + steps.length + '</b>' + stepTitle + '</p>';
       }
-      html += '<div class="head"><h2>' + esc(title) + '</h2>' + (subtitle && current === 0 ? '<p class="sub">' + esc(subtitle) + '</p>' : '') + '</div>';
+      if (title || (subtitle && current === 0)) html += '<div class="head">' + (title ? '<h2>' + esc(title) + '</h2>' : '') + (subtitle && current === 0 ? '<p class="sub">' + esc(subtitle) + '</p>' : '') + '</div>';
       if (showImage && current === 0) html += '<img class="cover" src="' + esc(image) + '" alt="Brochure RelaxedBuiten" width="132" height="171" loading="lazy">';
       html += '<form novalidate>';
       html += '<div class="hp" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>';
