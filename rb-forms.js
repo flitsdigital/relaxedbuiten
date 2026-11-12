@@ -436,7 +436,7 @@
     (scope || document).querySelectorAll('[data-rb-form]').forEach(mount);
   }
 
-  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.2.0' };
+  window.RBForms = { __loaded: true, init: init, mount: mount, config: CONFIG, version: '1.3.0' };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { init(); });
   else init();
