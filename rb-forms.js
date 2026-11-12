@@ -115,8 +115,9 @@
     '.cover{display:block;width:132px;height:auto;margin:-4px auto 36px;transform:perspective(600px) rotateX(18deg) rotateZ(-16deg);box-shadow:-10px 14px 22px rgba(0,0,0,.22);border-radius:3px}',
     /* velden: één ritme van 20px, ook als een rij onder elkaar valt */
     '.fields{display:grid;gap:20px}',
-    '.row{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}',
-    '@container (max-width:400px){.row{grid-template-columns:1fr}}',
+    '.row{display:grid;grid-template-columns:1fr;gap:20px 16px}',
+    /* naast elkaar pas vanaf 500px; subgrid houdt labels, velden en foutmeldingen op één lijn */
+    '@container (min-width:500px){.row{grid-template-columns:1fr 1fr;row-gap:0}.row>.field{display:grid;grid-template-rows:subgrid;grid-row:span 3;row-gap:0;align-content:start}.row>.field>.l{align-self:end}}',
     '.field{margin:0;min-width:0}',
     'fieldset.field{border:0;padding:0}',
     '.l{display:block;font-size:16px;line-height:1.3;margin:0 0 8px;padding:0}',
