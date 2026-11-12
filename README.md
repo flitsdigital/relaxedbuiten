@@ -11,7 +11,7 @@ Embedbare formulieren voor [relaxedbuiten.nl](https://relaxedbuiten.nl). Elke in
 **1. Script één keer site-breed** (Site settings → Custom code → Footer):
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/flitsdigital/relaxedbuiten@058b8642107b5261d1fcc2c1ccfd65fb45e70777/dist/rb-forms.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/gh/flitsdigital/relaxedbuiten@a562e7d96d5d5009884d03db080a4e872d2fa2a0/dist/rb-forms.min.js" defer></script>
 ```
 
 **2. Formulier plaatsen** met een *Embed*-element op de plek waar het formulier moet komen:
