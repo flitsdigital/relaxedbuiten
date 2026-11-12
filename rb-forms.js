@@ -173,8 +173,8 @@
     '@keyframes s{to{transform:rotate(360deg)}}',
     '.back{background:none;color:var(--rb-text);display:inline-flex;align-items:center;gap:4px;font-size:15px;min-height:44px;padding:0 4px;border-radius:8px}',
     '.back svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}',
-    '@container (max-width:420px){.actions{flex-direction:column;align-items:stretch;gap:4px}.actions .btn{width:100%}.back{align-self:center}.legal{text-align:center}}',
-    '.formerr{background:var(--rb-field-bg);color:var(--rb-field-text);border-left:4px solid var(--rb-error);padding:12px 16px;border-radius:8px;font-size:14px;line-height:1.5;margin-top:16px}',
+    '@container (max-width:420px){.actions{flex-direction:column;align-items:stretch;gap:4px}.actions .btn{width:100%}.back{align-self:center}.legal,.formerr{text-align:center}}',
+    '.formerr{color:var(--rb-error);font-size:14px;line-height:1.5;margin:12px 0 0}',
     /* bedankt */
     '.formerr a{color:inherit;font-weight:600;white-space:nowrap}',
     '.done{text-align:center;padding:8px 0}',
