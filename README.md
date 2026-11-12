@@ -46,7 +46,7 @@ Het formulier zit in een Shadow DOM, dus Webflow-CSS heeft er geen invloed op. A
 <div data-rb-form="brochure-mini" style="--rb-text:#fff;--rb-muted:#cfd8cf"></div>
 ```
 
-Beschikbaar: `--rb-accent`, `--rb-accent-dark`, `--rb-bg`, `--rb-text`, `--rb-muted`, `--rb-line`, `--rb-error`, `--rb-radius`, `--rb-heading-font`.
+Beschikbaar: `--rb-accent`, `--rb-accent-dark`, `--rb-bg`, `--rb-text`, `--rb-muted`, `--rb-line`, `--rb-error`, `--rb-radius`, `--rb-heading-font`, plus `--rb-field-text` en `--rb-field-bg` voor de invoervelden (die blijven standaard donker op wit, ook als `--rb-text` wit is).
 
 ### Conversies meten
 
@@ -73,5 +73,8 @@ De workflow herkent het formulier aan de naam en zet de velden zelf om.
 - `dist/rb-forms.min.js`: geminificeerd, deze wordt geladen (`npx terser rb-forms.js -c -m --comments '/^!/' -o dist/rb-forms.min.js`)
 - `brochure/`: brochure-PDF en coverafbeelding
 - `demo/index.html`: alle varianten op één pagina. Lokaal openen verstuurt niets; voeg `?live=1` toe om echt te versturen.
+- `demo/states.html`: elke stap en state (leeg, fouten, ingevuld, versturen, mislukt, gelukt, mobiel) met testdata.
+
+Per formulier kun je met `data-webhook="https://…"` een andere webhook gebruiken, bijvoorbeeld een testworkflow.
 
 Na een wijziging: commit, push en ververs de cache via `https://purge.jsdelivr.net/gh/flitsdigital/relaxedbuiten@main/dist/rb-forms.min.js`.
