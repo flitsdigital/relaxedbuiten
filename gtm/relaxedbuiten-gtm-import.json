@@ -1,6 +1,6 @@
 {
   "exportFormatVersion": 2,
-  "exportTime": "2026-11-12 14:15:00",
+  "exportTime": "2026-11-12 14:10:00",
   "containerVersion": {
     "path": "accounts/0/containers/0/versions/0",
     "accountId": "0",
@@ -32,10 +32,10 @@
         ],
         "firingTriggerId": [
           "2147479573",
-          "207"
+          "206"
         ],
         "tagFiringOption": "ONCE_PER_LOAD",
-        "notes": "Laadt pas na toestemming voor statistieken (basic consent mode). Advanced mode? Haal de extra toestemmingscheck weg.",
+        "notes": "Laadt pas na toestemming voor statistieken (event consent_update van de Flits-cookiebanner, ook bij elk volgend paginabezoek).",
         "consentSettings": {
           "consentStatus": "NEEDED",
           "consentType": {
@@ -53,68 +53,7 @@
         "accountId": "0",
         "containerId": "0",
         "tagId": "2",
-        "name": "Google tag - Google Ads",
-        "type": "googtag",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "tagId",
-            "value": "AW-{{C - Google Ads conversie-ID}}"
-          }
-        ],
-        "firingTriggerId": [
-          "2147479573",
-          "208"
-        ],
-        "tagFiringOption": "ONCE_PER_LOAD",
-        "notes": "",
-        "consentSettings": {
-          "consentStatus": "NEEDED",
-          "consentType": {
-            "type": "LIST",
-            "list": [
-              {
-                "type": "TEMPLATE",
-                "value": "ad_storage"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "tagId": "3",
-        "name": "Conversion Linker",
-        "type": "gclidw",
-        "parameter": [
-          {
-            "type": "BOOLEAN",
-            "key": "enableCrossDomain",
-            "value": "false"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "enableUrlPassthrough",
-            "value": "true"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "enableCookieOverrides",
-            "value": "false"
-          }
-        ],
-        "firingTriggerId": [
-          "2147479553"
-        ],
-        "tagFiringOption": "ONCE_PER_EVENT",
-        "notes": ""
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "tagId": "4",
-        "name": "GA4 - generate_lead",
+        "name": "GA4 - generate_lead (alle aanvragen)",
         "type": "gaawe",
         "parameter": [
           {
@@ -143,6 +82,21 @@
                     "type": "TEMPLATE",
                     "key": "parameter",
                     "value": "form_name"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{Lookup - formuliernaam leesbaar}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "form_id"
                   },
                   {
                     "type": "TEMPLATE",
@@ -218,7 +172,7 @@
           "201"
         ],
         "tagFiringOption": "ONCE_PER_EVENT",
-        "notes": "Markeer generate_lead in GA4 als key event (vervangt het oude nieuwe_lead).",
+        "notes": "Totaal van alle aanvragen. Markeer in GA4 als key event.",
         "consentSettings": {
           "consentStatus": "NEEDED",
           "consentType": {
@@ -235,14 +189,14 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "tagId": "5",
-        "name": "GA4 - form_start",
+        "tagId": "3",
+        "name": "GA4 - aanvraag per type",
         "type": "gaawe",
         "parameter": [
           {
             "type": "TEMPLATE",
             "key": "eventName",
-            "value": "form_start"
+            "value": "aanvraag_{{DLV - rb_form_type}}"
           },
           {
             "type": "TEMPLATE",
@@ -265,6 +219,158 @@
                     "type": "TEMPLATE",
                     "key": "parameter",
                     "value": "form_name"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{Lookup - formuliernaam leesbaar}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "form_id"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{DLV - rb_form}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "form_type"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{DLV - rb_form_type}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "interest"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{DLV - rb_interest}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "value"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{Lookup - leadwaarde}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "currency"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "EUR"
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "firingTriggerId": [
+          "201"
+        ],
+        "tagFiringOption": "ONCE_PER_EVENT",
+        "notes": "Wordt aanvraag_offerte, aanvraag_configurator, aanvraag_contact of aanvraag_brochure. Markeer de types die je als conversie telt als key event.",
+        "consentSettings": {
+          "consentStatus": "NEEDED",
+          "consentType": {
+            "type": "LIST",
+            "list": [
+              {
+                "type": "TEMPLATE",
+                "value": "analytics_storage"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "accountId": "0",
+        "containerId": "0",
+        "tagId": "4",
+        "name": "GA4 - formulier_gestart",
+        "type": "gaawe",
+        "parameter": [
+          {
+            "type": "TEMPLATE",
+            "key": "eventName",
+            "value": "formulier_gestart"
+          },
+          {
+            "type": "TEMPLATE",
+            "key": "measurementIdOverride",
+            "value": "{{C - GA4 Measurement ID}}"
+          },
+          {
+            "type": "BOOLEAN",
+            "key": "sendEcommerceData",
+            "value": "false"
+          },
+          {
+            "type": "LIST",
+            "key": "eventSettingsTable",
+            "list": [
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "form_name"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{Lookup - formuliernaam leesbaar}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "form_id"
                   },
                   {
                     "type": "TEMPLATE",
@@ -292,7 +398,7 @@
           }
         ],
         "firingTriggerId": [
-          "204"
+          "203"
         ],
         "tagFiringOption": "ONCE_PER_EVENT",
         "notes": "",
@@ -312,14 +418,14 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "tagId": "6",
-        "name": "GA4 - form_step",
+        "tagId": "5",
+        "name": "GA4 - formulier_stap",
         "type": "gaawe",
         "parameter": [
           {
             "type": "TEMPLATE",
             "key": "eventName",
-            "value": "form_step"
+            "value": "formulier_stap"
           },
           {
             "type": "TEMPLATE",
@@ -342,6 +448,21 @@
                     "type": "TEMPLATE",
                     "key": "parameter",
                     "value": "form_name"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{Lookup - formuliernaam leesbaar}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "form_id"
                   },
                   {
                     "type": "TEMPLATE",
@@ -384,7 +505,7 @@
           }
         ],
         "firingTriggerId": [
-          "205"
+          "204"
         ],
         "tagFiringOption": "ONCE_PER_EVENT",
         "notes": "",
@@ -404,14 +525,14 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "tagId": "7",
-        "name": "GA4 - form_error",
+        "tagId": "6",
+        "name": "GA4 - formulier_fout",
         "type": "gaawe",
         "parameter": [
           {
             "type": "TEMPLATE",
             "key": "eventName",
-            "value": "form_error"
+            "value": "formulier_fout"
           },
           {
             "type": "TEMPLATE",
@@ -434,6 +555,21 @@
                     "type": "TEMPLATE",
                     "key": "parameter",
                     "value": "form_name"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameterValue",
+                    "value": "{{Lookup - formuliernaam leesbaar}}"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "parameter",
+                    "value": "form_id"
                   },
                   {
                     "type": "TEMPLATE",
@@ -491,7 +627,7 @@
           }
         ],
         "firingTriggerId": [
-          "206"
+          "205"
         ],
         "tagFiringOption": "ONCE_PER_EVENT",
         "notes": "",
@@ -511,14 +647,14 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "tagId": "8",
-        "name": "GA4 - contact_click",
+        "tagId": "7",
+        "name": "GA4 - contact_klik",
         "type": "gaawe",
         "parameter": [
           {
             "type": "TEMPLATE",
             "key": "eventName",
-            "value": "contact_click"
+            "value": "contact_klik"
           },
           {
             "type": "TEMPLATE",
@@ -568,9 +704,9 @@
           }
         ],
         "firingTriggerId": [
+          "208",
           "209",
-          "210",
-          "211"
+          "210"
         ],
         "tagFiringOption": "ONCE_PER_EVENT",
         "notes": "",
@@ -590,128 +726,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "tagId": "9",
-        "name": "Google Ads - conversie lead",
-        "type": "awct",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "conversionId",
-            "value": "{{C - Google Ads conversie-ID}}"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "conversionLabel",
-            "value": "{{C - Google Ads label lead}}"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "conversionValue",
-            "value": "{{Lookup - leadwaarde}}"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "currencyCode",
-            "value": "EUR"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "enableConversionLinker",
-            "value": "true"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "rdp",
-            "value": "false"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "enableNewCustomerReporting",
-            "value": "false"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "enableProductReporting",
-            "value": "false"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "enableShippingData",
-            "value": "false"
-          }
-        ],
-        "firingTriggerId": [
-          "202"
-        ],
-        "tagFiringOption": "ONCE_PER_EVENT",
-        "notes": "Zelfde conversie als in de oude container, nu ook voor de configurators, met waarde per type.",
-        "consentSettings": {
-          "consentStatus": "NEEDED",
-          "consentType": {
-            "type": "LIST",
-            "list": [
-              {
-                "type": "TEMPLATE",
-                "value": "ad_storage"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "tagId": "10",
-        "name": "Google Ads - enhanced conversions",
-        "type": "awud",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "userDataVariable",
-            "value": "{{UPD - formulier}}"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "conversionId",
-            "value": "{{C - Google Ads conversie-ID}}"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "enableConversionLinker",
-            "value": "true"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "conversionCookiePrefix",
-            "value": "_gcl"
-          }
-        ],
-        "firingTriggerId": [
-          "202"
-        ],
-        "tagFiringOption": "ONCE_PER_EVENT",
-        "notes": "",
-        "consentSettings": {
-          "consentStatus": "NEEDED",
-          "consentType": {
-            "type": "LIST",
-            "list": [
-              {
-                "type": "TEMPLATE",
-                "value": "ad_storage"
-              },
-              {
-                "type": "TEMPLATE",
-                "value": "ad_user_data"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "tagId": "11",
+        "tagId": "8",
         "name": "Meta Pixel - PageView",
         "type": "html",
         "parameter": [
@@ -727,10 +742,10 @@
           }
         ],
         "firingTriggerId": [
-          "208"
+          "207"
         ],
         "tagFiringOption": "ONCE_PER_LOAD",
-        "notes": "Laadt alleen na toestemming voor marketing (event consent_update van de Flits-cookiebanner, ook bij elk volgend paginabezoek).",
+        "notes": "Laadt alleen na toestemming voor marketing.",
         "consentSettings": {
           "consentStatus": "NEEDED",
           "consentType": {
@@ -747,7 +762,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "tagId": "12",
+        "tagId": "9",
         "name": "Meta Pixel - Lead",
         "type": "html",
         "parameter": [
@@ -763,7 +778,7 @@
           }
         ],
         "firingTriggerId": [
-          "203"
+          "202"
         ],
         "tagFiringOption": "ONCE_PER_EVENT",
         "notes": "",
@@ -775,37 +790,6 @@
               {
                 "type": "TEMPLATE",
                 "value": "ad_storage"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "tagId": "13",
-        "name": "Hotjar",
-        "type": "hjtc",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "hotjar_site_id",
-            "value": "{{C - Hotjar Site ID}}"
-          }
-        ],
-        "firingTriggerId": [
-          "207"
-        ],
-        "tagFiringOption": "ONCE_PER_LOAD",
-        "notes": "Laadt alleen na toestemming voor statistieken. Noem Hotjar in de cookiebanner en privacyverklaring.",
-        "consentSettings": {
-          "consentStatus": "NEEDED",
-          "consentType": {
-            "type": "LIST",
-            "list": [
-              {
-                "type": "TEMPLATE",
-                "value": "analytics_storage"
               }
             ]
           }
@@ -841,47 +825,6 @@
         "accountId": "0",
         "containerId": "0",
         "triggerId": "202",
-        "name": "Formulier - verstuurd (offerte, configurator, contact)",
-        "type": "CUSTOM_EVENT",
-        "customEventFilter": [
-          {
-            "type": "EQUALS",
-            "parameter": [
-              {
-                "type": "TEMPLATE",
-                "key": "arg0",
-                "value": "{{_event}}"
-              },
-              {
-                "type": "TEMPLATE",
-                "key": "arg1",
-                "value": "rb_form_submit"
-              }
-            ]
-          }
-        ],
-        "filter": [
-          {
-            "type": "MATCH_REGEX",
-            "parameter": [
-              {
-                "type": "TEMPLATE",
-                "key": "arg0",
-                "value": "{{DLV - rb_form_type}}"
-              },
-              {
-                "type": "TEMPLATE",
-                "key": "arg1",
-                "value": "^(offerte|configurator|contact)$"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "triggerId": "203",
         "name": "Formulier - verstuurd (met toestemming marketing)",
         "type": "CUSTOM_EVENT",
         "customEventFilter": [
@@ -922,7 +865,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "triggerId": "204",
+        "triggerId": "203",
         "name": "Formulier - gestart",
         "type": "CUSTOM_EVENT",
         "customEventFilter": [
@@ -946,7 +889,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "triggerId": "205",
+        "triggerId": "204",
         "name": "Formulier - volgende stap",
         "type": "CUSTOM_EVENT",
         "customEventFilter": [
@@ -970,7 +913,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "triggerId": "206",
+        "triggerId": "205",
         "name": "Formulier - foutmelding",
         "type": "CUSTOM_EVENT",
         "customEventFilter": [
@@ -994,7 +937,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "triggerId": "207",
+        "triggerId": "206",
         "name": "Toestemming - statistieken",
         "type": "CUSTOM_EVENT",
         "customEventFilter": [
@@ -1035,7 +978,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "triggerId": "208",
+        "triggerId": "207",
         "name": "Toestemming - marketing",
         "type": "CUSTOM_EVENT",
         "customEventFilter": [
@@ -1076,7 +1019,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "triggerId": "209",
+        "triggerId": "208",
         "name": "Klik - telefoon",
         "type": "LINK_CLICK",
         "filter": [
@@ -1112,7 +1055,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "triggerId": "210",
+        "triggerId": "209",
         "name": "Klik - e-mail",
         "type": "LINK_CLICK",
         "filter": [
@@ -1148,7 +1091,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "triggerId": "211",
+        "triggerId": "210",
         "name": "Klik - WhatsApp",
         "type": "LINK_CLICK",
         "filter": [
@@ -1193,45 +1136,15 @@
           {
             "type": "TEMPLATE",
             "key": "value",
-            "value": "G-TK0V18VDGB"
+            "value": "G-XXXXXXXXXX"
           }
         ],
-        "notes": "Overgenomen uit de oude container. Nieuwe GA4-property? Vervang dit ID."
+        "notes": "VUL IN: het Measurement ID van de nieuwe GA4-property (GA4 → Beheer → Gegevensstromen → Web)."
       },
       {
         "accountId": "0",
         "containerId": "0",
         "variableId": "102",
-        "name": "C - Google Ads conversie-ID",
-        "type": "c",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "value",
-            "value": "17424164218"
-          }
-        ],
-        "notes": "Overgenomen uit de oude container (AW-17424164218)."
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "variableId": "103",
-        "name": "C - Google Ads label lead",
-        "type": "c",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "value",
-            "value": "kIMRCPeqsv0aEPrKvvRA"
-          }
-        ],
-        "notes": "Label van de bestaande Ads-conversie voor leads."
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "variableId": "104",
         "name": "C - Meta Pixel ID",
         "type": "c",
         "parameter": [
@@ -1241,27 +1154,12 @@
             "value": "475021241300428"
           }
         ],
-        "notes": "Overgenomen uit de oude container."
+        "notes": "Overgenomen uit de oude container. Geen Meta nodig? Pauzeer of verwijder de twee Meta-tags."
       },
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "105",
-        "name": "C - Hotjar Site ID",
-        "type": "c",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "value",
-            "value": "6521657"
-          }
-        ],
-        "notes": "Overgenomen uit de oude container. Hotjar niet meer nodig? Pauzeer de Hotjar-tag."
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "variableId": "106",
+        "variableId": "103",
         "name": "DLV - rb_form",
         "type": "v",
         "parameter": [
@@ -1286,7 +1184,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "107",
+        "variableId": "104",
         "name": "DLV - rb_form_type",
         "type": "v",
         "parameter": [
@@ -1311,7 +1209,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "108",
+        "variableId": "105",
         "name": "DLV - rb_interest",
         "type": "v",
         "parameter": [
@@ -1336,7 +1234,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "109",
+        "variableId": "106",
         "name": "DLV - rb_step",
         "type": "v",
         "parameter": [
@@ -1361,7 +1259,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "110",
+        "variableId": "107",
         "name": "DLV - rb_field",
         "type": "v",
         "parameter": [
@@ -1386,7 +1284,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "111",
+        "variableId": "108",
         "name": "DLV - consent_analytics",
         "type": "v",
         "parameter": [
@@ -1411,7 +1309,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "112",
+        "variableId": "109",
         "name": "DLV - consent_marketing",
         "type": "v",
         "parameter": [
@@ -1436,107 +1334,7 @@
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "113",
-        "name": "DLV - user_data.email",
-        "type": "v",
-        "parameter": [
-          {
-            "type": "INTEGER",
-            "key": "dataLayerVersion",
-            "value": "2"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "setDefaultValue",
-            "value": "false"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "name",
-            "value": "user_data.email"
-          }
-        ],
-        "notes": ""
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "variableId": "114",
-        "name": "DLV - user_data.phone_number",
-        "type": "v",
-        "parameter": [
-          {
-            "type": "INTEGER",
-            "key": "dataLayerVersion",
-            "value": "2"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "setDefaultValue",
-            "value": "false"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "name",
-            "value": "user_data.phone_number"
-          }
-        ],
-        "notes": ""
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "variableId": "115",
-        "name": "DLV - user_data.first_name",
-        "type": "v",
-        "parameter": [
-          {
-            "type": "INTEGER",
-            "key": "dataLayerVersion",
-            "value": "2"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "setDefaultValue",
-            "value": "false"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "name",
-            "value": "user_data.address.first_name"
-          }
-        ],
-        "notes": ""
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "variableId": "116",
-        "name": "DLV - user_data.last_name",
-        "type": "v",
-        "parameter": [
-          {
-            "type": "INTEGER",
-            "key": "dataLayerVersion",
-            "value": "2"
-          },
-          {
-            "type": "BOOLEAN",
-            "key": "setDefaultValue",
-            "value": "false"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "name",
-            "value": "user_data.address.last_name"
-          }
-        ],
-        "notes": ""
-      },
-      {
-        "accountId": "0",
-        "containerId": "0",
-        "variableId": "117",
+        "variableId": "110",
         "name": "Lookup - leadwaarde",
         "type": "smm",
         "parameter": [
@@ -1622,52 +1420,163 @@
             ]
           }
         ],
-        "notes": "Relatieve waarde per type lead voor Google Ads-bieden. Pas aan naar wat een lead per type gemiddeld oplevert."
+        "notes": "Relatieve waarde per type aanvraag (configurator 50, offerte 40, contact 15, brochure 10). Zichtbaar als 'value' in GA4. Pas aan naar eigen inschatting."
       },
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "118",
-        "name": "UPD - formulier",
-        "type": "awec",
+        "variableId": "111",
+        "name": "Lookup - formuliernaam leesbaar",
+        "type": "smm",
         "parameter": [
           {
-            "type": "TEMPLATE",
-            "key": "mode",
-            "value": "MANUAL"
+            "type": "BOOLEAN",
+            "key": "setDefaultValue",
+            "value": "true"
           },
           {
             "type": "TEMPLATE",
-            "key": "email",
-            "value": "{{DLV - user_data.email}}"
+            "key": "input",
+            "value": "{{DLV - rb_form}}"
           },
           {
             "type": "TEMPLATE",
-            "key": "phone_number",
-            "value": "{{DLV - user_data.phone_number}}"
+            "key": "defaultValue",
+            "value": "{{DLV - rb_form}}"
           },
           {
-            "type": "TEMPLATE",
-            "key": "first_name",
-            "value": "{{DLV - user_data.first_name}}"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "last_name",
-            "value": "{{DLV - user_data.last_name}}"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "country",
-            "value": "NL"
+            "type": "LIST",
+            "key": "map",
+            "list": [
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "brochure"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Brochure-pagina"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "brochure-mini"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Brochure footer"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "offerte"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Offerte-pagina"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "offerte-hero"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Offerte hero"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "contact"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Contactpagina"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "configurator-hottub"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Configurator hottub"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "configurator-sauna"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Configurator sauna"
+                  }
+                ]
+              },
+              {
+                "type": "MAP",
+                "map": [
+                  {
+                    "type": "TEMPLATE",
+                    "key": "key",
+                    "value": "configurator-jacuzzi"
+                  },
+                  {
+                    "type": "TEMPLATE",
+                    "key": "value",
+                    "value": "Configurator jacuzzi"
+                  }
+                ]
+              }
+            ]
           }
         ],
-        "notes": "Gegevens voor enhanced conversions. Google hasht ze in de browser; alleen gebruikt als ad_user_data is toegestaan."
+        "notes": ""
       },
       {
         "accountId": "0",
         "containerId": "0",
-        "variableId": "119",
+        "variableId": "112",
         "name": "JS - klik type",
         "type": "jsm",
         "parameter": [
